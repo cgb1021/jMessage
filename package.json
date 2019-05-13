@@ -1,0 +1,22 @@
+{
+  "name": "jmessage",
+  "version": "0.0.1",
+  "description": "js message",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cgb1021/jMessage.git"
+  },
+  "keywords": [
+    "message"
+  ],
+  "author": "cgb1021@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cgb1021/jMessage/issues"
+  },
+  "homepage": "https://github.com/cgb1021/jMessage#readme"
+}
