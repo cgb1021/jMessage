@@ -1,5 +1,2 @@
-module.exports = {
-  say () {
-    alert('say hello.')
-  }
-};
+module.exports = require('./lib/message');
+exports.default = require('./lib/message');

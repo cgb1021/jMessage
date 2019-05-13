@@ -3,7 +3,15 @@
   "version": "0.0.1",
   "description": "js message",
   "main": "index.js",
+  "style": "style.css",
+  "files": [
+    "lib"
+  ],
   "scripts": {
+    "clean": "rm -rf lib && mkdir lib",
+    "lib": "babel src --out-dir lib",
+    "sass": "sass style/* style.css",
+    "build": "npm run clean && npm run lib && npm run sass",
     "test": "test"
   },
   "repository": {
@@ -11,12 +19,17 @@
     "url": "git+https://github.com/cgb1021/jMessage.git"
   },
   "keywords": [
-    "message"
+    "message",
+    "toast"
   ],
   "author": "cgb1021@gmail.com",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cgb1021/jMessage/issues"
   },
-  "homepage": "https://github.com/cgb1021/jMessage#readme"
+  "homepage": "https://github.com/cgb1021/jMessage#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-stage-2": "^6.24.1"
+  }
 }
