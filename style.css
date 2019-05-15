@@ -26,19 +26,22 @@
   text-align: left;
   outline: none;
   transition: box-shadow .2s ease-out;
-  border-radius: .3rem; }
+  border-radius: .3rem;
+  opacity: .9; }
   .jmessage .message-box__head, .jmessage .message-box__body, .jmessage .message-box__foot {
     padding: 1rem; }
-  .jmessage .message-box_active:active {
-    transition: box-shadow .2s ease-out;
-    -webkit-box-shadow: 0 0 .5rem 0 #333;
-    -moz-box-shadow: 0 0 .5rem 0 #333;
-    -ms-box-shadow: 0 0 .5rem 0 #333;
-    box-shadow: 0 0 .5rem 0 #333;
-    -webkit-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
-    -moz-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
-    -ms-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
-    box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5); }
+  .jmessage .message-box_active {
+    opacity: 1; }
+    .jmessage .message-box_active:active {
+      transition: box-shadow .2s ease-out;
+      -webkit-box-shadow: 0 0 .5rem 0 #333;
+      -moz-box-shadow: 0 0 .5rem 0 #333;
+      -ms-box-shadow: 0 0 .5rem 0 #333;
+      box-shadow: 0 0 .5rem 0 #333;
+      -webkit-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
+      -moz-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
+      -ms-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
+      box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5); }
   .jmessage .message-box__head {
     position: relative;
     border-bottom: 1px solid #e9ecef;
