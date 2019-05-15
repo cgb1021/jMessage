@@ -1,6 +1,6 @@
 const message = {
   option: {
-    zIndex: 0,
+    zIndex: 999,
     activeClassName: '',
     maskClassName: ''
   }, // 全局自定义配置
@@ -10,14 +10,13 @@ const message = {
 document = window.document,
 rootNode = document.createElement('div'),
 className = 'message-box', // 弹窗通用classname
-activeClassName = 'active', // 当前激活弹窗classname
-maskClassName = 'message-box__mask', // 遮罩层classname
+activeClassName = `${className}_active`, // 当前激活弹窗classname
+maskClassName = `${className}__mask`, // 遮罩层classname
 defaultOption = {
   title: '提示', // 显示标题
   text: '', // 主体内容（文字）
   buttons: ['确认'], // 按钮数组
   className: '', // 附加css类名
-  zIndex: 1000, // css z-index属性
   showMask: true, // 是否显示遮罩层
   timeout: 0, // 多少秒后自动关闭
   transform: true, // 是否使用transform属性拖动
@@ -45,7 +44,7 @@ cssPrefix = ''
 ;
 
 rootNode.id = 'jmessage';
-rootNode.className = 'j-message';
+rootNode.className = 'jmessage';
 document.body.appendChild(rootNode);
 //监测键盘esc
 document.body.addEventListener('keydown', function (e) {
@@ -74,7 +73,7 @@ document.body.addEventListener('keydown', function (e) {
 function appendMask () {
   const node = mask.node = document.createElement('div');
   node.className = maskClassName;
-  node.style.zIndex = message.option.zIndex || defaultOption.zIndex;
+  node.style.zIndex = message.option.zIndex;
   rootNode.appendChild(node);
 
   node.addEventListener('click', function () {
@@ -256,10 +255,10 @@ function append (self) {
   //append node
   const node = self.node = document.createElement('div');
   node.id = `${self.type}_box_${self.id}`;
-  node.className = `${className} ${self.type}-box ${className}_${activeClassName} ${self.option.className}`;
-  node.innerHTML = `<div class="message-box__head">${self.option.title}<a href="javascript:void(0);" class="${className}__close" title="close/关闭">×</a></div><div class="${className}__body">${self.option.text}</div><div class="${className}__foot"></div></div>`;
+  node.className = `${className} ${self.type}-box ${activeClassName} ${message.option.activeClassName} ${self.option.className}`;
+  node.innerHTML = `<div class="${className}__head">${self.option.title}<span class="${className}__close" title="close/关闭">×</span></div><div class="${className}__body">${self.option.text}</div><div class="${className}__foot"></div></div>`;
   //绑定关闭事件
-  let cssText = `position:fixed;z-index:${(self.option.zIndex > 0 ? self.option.zIndex : 10000) + counter};`,
+  let cssText = `position:fixed;z-index:${(message.option.zIndex > 0 ? message.option.zIndex : 10000) + counter};`,
     i = 0,
     length = self.option.buttons.length,
     eventsName,
@@ -306,7 +305,7 @@ function append (self) {
     try {
       self.prevBox = currentBox;
       self.prevBox.nextBox = self;
-      self.prevBox.node.classList.remove(`${className}_${activeClassName}`);
+      self.prevBox.node.classList.remove(activeClassName, message.option.activeClassName);
     } catch (e) {
       console.log('append error:', e);
     }
@@ -324,7 +323,7 @@ function append (self) {
       try {
         self.remove(-3);
       } catch (e) {}
-    }, self.option.timeout);
+    }, self.option.timeout * 1000);
   }
 }
 
@@ -375,13 +374,13 @@ class Box {
         };
 
         //末端到2个box交换z-index和className
-        currentBox.node.classList.remove(`${className}_${activeClassName}`);
+        currentBox.node.classList.remove(activeClassName, message.option.activeClassName);
       } catch (e) {
         console.log('activate error:', e);
       }
       currentBox = this;
     }
-    node.classList.add(`${className}_${activeClassName}`);
+    node.classList.add(activeClassName, message.option.activeClassName);
 
     this.events && typeof this.events.active == 'function' && this.events.active(this);
 
@@ -444,14 +443,53 @@ class Box {
     }
 }
 class AlertBox extends Box {
-  constructor (option, events) {
-    super(option, events);
+  constructor (text, events) {
+    super({ text }, events);
     this.type = 'alert';
     append(this);
   }
 }
-export const alert = (option, events) => {
-  return new AlertBox(option, events);
+class ConfirmBox extends Box {
+  constructor(text, events) {
+    super({
+      text,
+      buttons: ['确认', '取消']
+    }, events);
+    this.type = 'confirm';
+    append(this);
+  }
+}
+class ToastBox extends Box {
+  constructor(text, timeout = 3) {
+    super({
+      text,
+      timeout,
+      showMask: false,
+      dragMode: 0,
+      buttons: []
+    });
+    this.type = 'toast';
+    append(this);
+  }
+}
+class PopBox extends Box {
+  constructor(option, events) {
+    super(option, events);
+    this.type = 'pop';
+    append(this);
+  }
+}
+export const alert = (text, events) => {
+  return new AlertBox(text, events);
+}
+export const confirm = (text, events) => {
+  return new ConfirmBox(text, events);
+}
+export const toast = (text, timeout) => {
+  return new ToastBox(text, timeout);
+}
+export const pop = (option, events) => {
+  return new PopBox(option, events);
 }
 export const config = option => {
   if (option && typeof option === 'object') Object.assign(message.option, option);
@@ -460,5 +498,8 @@ export const config = option => {
 
 export default {
   alert,
-  config
+  confirm,
+  config,
+  pop,
+  toast
 }

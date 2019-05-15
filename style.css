@@ -1,9 +1,9 @@
 /*message-box*/
-#jmessage .message-box,
-#jmessage .message-box__mask {
+.jmessage .message-box,
+.jmessage .message-box__mask {
   position: fixed;
   margin: 0; }
-#jmessage .message-box__mask {
+.jmessage .message-box__mask {
   width: 100%;
   height: 100%;
   z-index: 100;
@@ -11,9 +11,9 @@
   opacity: .5;
   left: 0;
   top: 0; }
-  #jmessage .message-box__mask.hide {
+  .jmessage .message-box__mask.hide {
     display: none; }
-#jmessage .message-box {
+.jmessage .message-box {
   background-color: white;
   border: 1px solid #e9ecef;
   box-sizing: border-box;
@@ -27,9 +27,9 @@
   outline: none;
   transition: box-shadow .2s ease-out;
   border-radius: .3rem; }
-  #jmessage .message-box__head, #jmessage .message-box__body, #jmessage .message-box__foot {
+  .jmessage .message-box__head, .jmessage .message-box__body, .jmessage .message-box__foot {
     padding: 1rem; }
-  #jmessage .message-box_active:active {
+  .jmessage .message-box_active:active {
     transition: box-shadow .2s ease-out;
     -webkit-box-shadow: 0 0 .5rem 0 #333;
     -moz-box-shadow: 0 0 .5rem 0 #333;
@@ -39,7 +39,7 @@
     -moz-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
     -ms-box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5);
     box-shadow: 0 0 0.5rem 0 rgba(51, 51, 51, 0.5); }
-  #jmessage .message-box__head {
+  .jmessage .message-box__head {
     position: relative;
     border-bottom: 1px solid #e9ecef;
     line-height: 1;
@@ -49,11 +49,11 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none; }
-  #jmessage .message-box__body {
+  .jmessage .message-box__body {
     text-align: justify; }
-  #jmessage .message-box__foot {
+  .jmessage .message-box__foot {
     text-align: right; }
-    #jmessage .message-box__foot > button {
+    .jmessage .message-box__foot > button {
       border-radius: .2rem;
       margin-left: 1rem;
       padding: .25rem 1.5rem;
@@ -75,12 +75,12 @@
       border-radius: .25rrem;
       transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
       cursor: pointer; }
-      #jmessage .message-box__foot > button:hover {
+      .jmessage .message-box__foot > button:hover {
         background-color: #e6e6e6;
         border-color: #adadad; }
-      #jmessage .message-box__foot > button:focus {
+      .jmessage .message-box__foot > button:focus {
         border-color: #adadad; }
-  #jmessage .message-box__close {
+  .jmessage .message-box__close {
     width: 1.8rem;
     height: 1.8rem;
     display: block;
@@ -89,26 +89,27 @@
     right: .6rem;
     top: 50%;
     border: .5rem solid transparent;
+    cursor: pointer;
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%); }
-    #jmessage .message-box__close:hover {
+    .jmessage .message-box__close:hover {
       -webkit-filter: drop-shadow(0 0 0.05rem #666);
       -moz-filter: drop-shadow(0 0 0.05rem #666);
       -ms-filter: drop-shadow(0 0 0.05rem #666);
       filter: drop-shadow(0 0 0.05rem #666); }
-    #jmessage .message-box__close::before {
+    .jmessage .message-box__close::before {
       -webkit-transform: translateY(-50%) rotate(45deg);
       -moz-transform: translateY(-50%) rotate(45deg);
       -ms-transform: translateY(-50%) rotate(45deg);
       transform: translateY(-50%) rotate(45deg); }
-    #jmessage .message-box__close::after {
+    .jmessage .message-box__close::after {
       -webkit-transform: translateY(-50%) rotate(-45deg);
       -moz-transform: translateY(-50%) rotate(-45deg);
       -ms-transform: translateY(-50%) rotate(-45deg);
       transform: translateY(-50%) rotate(-45deg); }
-    #jmessage .message-box__close::before, #jmessage .message-box__close::after {
+    .jmessage .message-box__close::before, .jmessage .message-box__close::after {
       content: '';
       position: absolute;
       height: .15rem;
@@ -117,7 +118,7 @@
       left: 0;
       background-color: #999;
       transform-origin: center; }
-#jmessage .toast-box {
+.jmessage .toast-box {
   padding: .5rem 1rem;
   border-radius: 8px;
   border: none;
@@ -127,7 +128,10 @@
   width: inherit;
   background-color: rgba(0, 0, 0, 0.6);
   color: white; }
-#jmessage .drag-enable {
+  .jmessage .toast-box .message-box__head,
+  .jmessage .toast-box .message-box__foot {
+    display: none; }
+.jmessage .drag-enable {
   cursor: move; }
 
 /*# sourceMappingURL=style.css.map */

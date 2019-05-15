@@ -1,5 +1,5 @@
 /*message-box*/
-#jmessage {
+.jmessage {
   .message-box,
   .message-box__mask {
     position: fixed;
@@ -117,6 +117,7 @@
       right: .6rem;
       top: 50%;
       border: .5rem solid transparent;
+      cursor: pointer;
       -webkit-transform: translateY(-50%);
       -moz-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
@@ -166,6 +167,11 @@
     width: inherit;
     background-color: rgba(0, 0, 0, .6);
     color: white;
+
+    .message-box__head,
+    .message-box__foot {
+      display:none;
+    }
   }
   .drag-enable {
     cursor: move;
