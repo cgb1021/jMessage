@@ -97,8 +97,7 @@ function clickEvent(self, index) {
  * @param object option 配置对象
  */
 function dragEvent (box) {
-  const dragMode = box.option.dragMode,
-    data = {
+  const data = {
       width: box.node.offsetWidth, //弹窗宽度
       height: box.node.offsetHeight, //弹窗高度
       startX: 0, //鼠标/触摸初始x轴坐标
@@ -131,7 +130,7 @@ function dragEvent (box) {
         //移动开始
       case 'touchstart':
       case 'mousedown': {
-        if (dragMode && box.movesNode.contains(e.target)) {
+        if (box.movesNode && box.movesNode.contains(e.target)) {
           if (type === 'touchstart') {
             if (e.targetTouches.length === 1) {
               data.startX = e.targetTouches[0].pageX;
@@ -198,7 +197,7 @@ function dragEvent (box) {
         //移动开始
       case 'touchstart':
       case 'mousedown': {
-        if (dragMode && box.movesNode.contains(e.target)) {
+        if (box.movesNode && box.movesNode.contains(e.target)) {
           if (type === 'touchstart') {
             if (e.targetTouches.length === 1) {
               data.startX = e.targetTouches[0].pageX;
@@ -248,17 +247,18 @@ function dragEvent (box) {
  */
 function create (self) {
   //create node
-  const node = self.node = document.createElement('div');
+  const node = self.node = document.createElement('div'),
+    event = dragEvent(self),
+    length = self.option.buttons.length
+  ;
   node.id = `${self.type}_box_${self.id}`;
   node.className = `${className} ${self.type}-box ${activeClassName} ${message.option.activeClassName} ${self.option.className}`;
   node.innerHTML = `<div class="${className}__head">${self.option.title}<span class="${className}__close" title="close/关闭">×</span></div><div class="${className}__body">${self.option.text}</div><div class="${className}__foot"></div></div>`;
   rootNode.appendChild(node);
   //绑定关闭事件
   let cssText = `position:fixed;z-index:${(typeof message.option.zIndex === 'number' && message.option.zIndex > 0 ? message.option.zIndex : 10000) + counter};`,
-    i = 0,
-    length = self.option.buttons.length,
-    eventsName,
-    event = dragEvent(self);
+    eventsName
+  ;
 
   //create node
   if (message.option.transform && transform) {
@@ -272,9 +272,9 @@ function create (self) {
   node.querySelector(`.${className}__close`).addEventListener('click', clickEvent(self, 0));
   if (length) {
     //如果有按钮
-    let footNode = node.childNodes[2];
-    for (; i < length; i++) {
-      let button = document.createElement('button');
+    const footNode = node.childNodes[2];
+    for (let i = 0; i < length; i++) {
+      const button = document.createElement('button');
       button.className = 'btn';
       button.textContent = self.option.buttons[i];
       button.addEventListener('click', clickEvent(self, i + 1));
@@ -293,7 +293,7 @@ function create (self) {
     eventsName = ['touchend', 'mouseup'];
   }
   //拖动事件
-  for (i = eventsName.length - 1; i >= 0; i--) {
+  for (let i = eventsName.length - 1; i >= 0; i--) {
     node.addEventListener(eventsName[i], event);
   }
   //保存当前对象
@@ -334,7 +334,7 @@ class Box {
       defaultOption,
       typeof text === 'string' ? { text } : text);
     this.events = events;
-    this.nextBox = this.prevBox = this.node = null;
+    this.nextBox = this.prevBox = this.node = this.movesNode = null;
   }
   /*
    * 激活当前弹窗到顶层
@@ -383,7 +383,7 @@ class Box {
   remove(index = -1) {
     //移除node
     this.node.parentNode.removeChild(this.node);
-    this.node = null;
+    this.node = this.movesNode = null;
     this.resolve({
       index
     });
@@ -410,7 +410,7 @@ class Box {
     } else {
       currentBox = null;
       //关闭蒙版
-      !counter && mask.hide();
+      mask.hide();
     }
 
     this.events = this.prevBox = this.nextBox = null;
