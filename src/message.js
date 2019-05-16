@@ -44,7 +44,8 @@ mask = {
   }
 }, //蒙层对象
 transformStyle = transform3d ? 'translate3d({$position},0)' : 'translate({$position})',
-transformStr = !hasTransformPrefix ? 'transform' : `${cssPrefix}Transform`
+transformStr = !hasTransformPrefix ? 'transform' : `${cssPrefix}Transform`,
+destroy = {}
 ;
 let currentBox = null, //当前弹窗对象
 counter = 0 //当前弹窗个数计数器
@@ -83,13 +84,6 @@ function exit(index = -1) {
   counter && currentBox.remove(index);
   !counter && mask.hide();
 }
-function clickEvent(self, index) {
-  return function clickEvent (e) {
-    e.preventDefault();
-    self.remove(index);
-    self = index = null;
-  }
-}
 /*
  * 移动处理方法
  *
@@ -107,7 +101,8 @@ function dragEvent (box) {
     };
   let enable = false //是否允许移动
   ;
-
+  
+  destroy[box.id].push(() => box = null);
   //确定拖动模式
   if (message.option.transform && transform) {
     //transform模式
@@ -267,7 +262,10 @@ function create (self) {
   }
   node.style.cssText = cssText;
   // 按钮和关闭事件
-  node.querySelector(`.${className}__close`).addEventListener('click', clickEvent(self, 0));
+  node.querySelector(`.${className}__close`).addEventListener('click', e => {
+    e.preventDefault();
+    self && self.remove(0);
+  });
   if (length) {
     //如果有按钮
     const footNode = node.childNodes[2];
@@ -275,7 +273,10 @@ function create (self) {
       const button = document.createElement('button');
       button.className = 'btn';
       button.textContent = self.option.buttons[i];
-      button.addEventListener('click', clickEvent(self, i + 1));
+      button.addEventListener('click', e => {
+        e.preventDefault();
+        self && self.remove(i + 1);
+      });
       footNode.appendChild(button);
     }
     footNode.firstElementChild.focus();
@@ -319,6 +320,7 @@ function create (self) {
       } catch (e) {console.log(`remove box error: ${self.id}`)}
     }, self.option.timeout * 1000);
   }
+  destroy[self.id].push(() => self = null);
 }
 
 class Box {
@@ -334,6 +336,7 @@ class Box {
       typeof text === 'string' ? { text } : text);
     this.events = events;
     this.nextBox = this.prevBox = this.node = this.movesNode = null;
+    destroy[this.id] = [];
   }
   /*
    * 激活当前弹窗到顶层
@@ -382,7 +385,8 @@ class Box {
     const data = {
       index,
       type: this.type
-    };
+    }
+    ;
     this.node.parentNode.removeChild(this.node);
     this.node = this.movesNode = null;
     this.resolve(data);
@@ -411,6 +415,8 @@ class Box {
     }
 
     this.events = this.prevBox = this.nextBox = null;
+    destroy[this.id].forEach(fn => fn());
+    destroy[this.id] = null;
   }
   /*
    *  关闭事件
