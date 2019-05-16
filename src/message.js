@@ -84,7 +84,7 @@ function exit(index = -1) {
   !counter && mask.hide();
 }
 function clickEvent(self, index) {
-  return function (e) {
+  return function clickEvent (e) {
     e.preventDefault();
     self.remove(index);
     self = index = null;
@@ -98,8 +98,6 @@ function clickEvent(self, index) {
  */
 function dragEvent (box) {
   const data = {
-      width: box.node.offsetWidth, //弹窗宽度
-      height: box.node.offsetHeight, //弹窗高度
       startX: 0, //鼠标/触摸初始x轴坐标
       startY: 0, //鼠标/触摸初始y轴坐标
       x: 0, //弹窗初始x轴坐标
@@ -113,7 +111,7 @@ function dragEvent (box) {
   //确定拖动模式
   if (message.option.transform && transform) {
     //transform模式
-    return function (e) {
+    return function dragEvent (e) {
       const type = e.type;
       switch (type) {
         //移动中
@@ -175,7 +173,7 @@ function dragEvent (box) {
     };
   } else {
     //top/left模式
-    return function (e) {
+    return function dragEvent (e) {
       const type = e.type;
       switch (type) {
         //移动中
@@ -301,7 +299,7 @@ function create (self) {
     try {
       self.prevBox = currentBox;
       currentBox.nextBox = self;
-      currentBox.node.classList.remove(activeClassName, message.option.activeClassName);
+      currentBox.node.classList.remove(activeClassName) && message.option.activeClassName && currentBox.node.classList.remove(message.option.activeClassName);
     } catch (e) {
       console.log('create error:', e);
     }
@@ -325,6 +323,7 @@ function create (self) {
 
 class Box {
   /*
+   * @param string/object text text(html)/option
    * @param object events {close, active}
    */
   constructor (text, events) {
@@ -341,13 +340,13 @@ class Box {
    */
   activate () {
     const node = this.node;
-    let box,
-      zIndex = node.style.zIndex;
     //断开当前box对象
     this.option.buttons.length && node.querySelector(`.${className}__foot>button:first-child`).focus();
-
+    node.classList.add(activeClassName) && message.option.activeClassName && node.classList.add(message.option.activeClassName);
     //把当前box对象添加到链到末端
     if (currentBox !== this) {
+      let box,
+        zIndex = node.style.zIndex;
       try {
         if (this.prevBox)
           this.prevBox.nextBox = this.nextBox;
@@ -365,14 +364,12 @@ class Box {
         };
 
         //末端到2个box交换z-index和className
-        currentBox.node.classList.remove(activeClassName, message.option.activeClassName);
+        currentBox.node.classList.remove(activeClassName) && message.option.activeClassName && currentBox.node.classList.remove(message.option.activeClassName);
       } catch (e) {
         console.log('activate error:', e);
       }
       currentBox = this;
     }
-    node.classList.add(activeClassName, message.option.activeClassName);
-
     this.events && typeof this.events.active === 'function' && this.events.active(this);
 
     return this;
@@ -380,17 +377,17 @@ class Box {
   /*
    * 销毁对象
    */
-  remove(index = -1) {
+  remove (index = -1) {
     //移除node
+    const data = {
+      index,
+      type: this.type
+    };
     this.node.parentNode.removeChild(this.node);
     this.node = this.movesNode = null;
-    this.resolve({
-      index
-    });
+    this.resolve(data);
     this.promise.catch(() => {});
-    this.events && typeof this.events.close === 'function' && this.events.close({
-      index
-    });
+    this.events && typeof this.events.close === 'function' && this.events.close(data);
     //清理message列表
     if (--counter) {
       //当前活动弹窗（currentBox）
@@ -419,8 +416,12 @@ class Box {
    *  关闭事件
    *  -3 timeout -2 键盘esc -1 点击遮罩层 0 关闭按钮 1~ 底部按钮
    */
-  close(cb) {
-    this.promise = this.promise.then(cb);
+  close (cb) {
+    return this.promise.then(cb);
+  }
+  text (text) {
+    this.node.querySelector(`.${className}__body`).innerHTML = text;
+    return this;
   }
 }
 class AlertBox extends Box {
@@ -460,18 +461,10 @@ class PopBox extends Box {
     create(this);
   }
 }
-export const alert = (text, events) => {
-  return new AlertBox(text, events);
-}
-export const confirm = (text, events) => {
-  return new ConfirmBox(text, events);
-}
-export const toast = (text, timeout) => {
-  return new ToastBox(text, timeout);
-}
-export const pop = (option, events) => {
-  return new PopBox(option, events);
-}
+export const alert = (text, events) => new AlertBox(text, events);
+export const confirm = (text, events) => new ConfirmBox(text, events);
+export const toast = (text, timeout) => new ToastBox(text, timeout);
+export const pop = (option, events) => new PopBox(option, events);
 export const config = option => {
   if (option && typeof option === 'object') Object.assign(message.option, option);
   return Object.assign({}, message.option);
