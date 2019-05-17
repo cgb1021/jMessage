@@ -36,7 +36,7 @@ mask = {
       node.style.zIndex = message.option.zIndex;
       rootNode.appendChild(node);
 
-      node.addEventListener('click', function () {
+      node.addEventListener('click', function maskClick () {
         !currentBox.option.noClose && counter <= 1 && exit(-1);
       });
     }
@@ -55,7 +55,7 @@ rootNode.id = 'jmessage';
 rootNode.className = 'jmessage';
 document.body.appendChild(rootNode);
 //监测键盘esc
-document.body.addEventListener('keydown', function (e) {
+document.body.addEventListener('keydown', function bodyKeydown(e) {
   const key = e.which || e.keyCode;
 
   if (/^(?:13|27)$/.test(key) && currentBox && !/toast/i.test(currentBox.type)) {
@@ -106,7 +106,7 @@ function dragEvent (box) {
   //确定拖动模式
   if (message.option.transform && transform) {
     //transform模式
-    return function dragEvent (e) {
+    return function dragEventTransform (e) {
       const type = e.type;
       switch (type) {
         //移动中
@@ -168,7 +168,7 @@ function dragEvent (box) {
     };
   } else {
     //top/left模式
-    return function dragEvent (e) {
+    return function dragEventTopLeft (e) {
       const type = e.type;
       switch (type) {
         //移动中
@@ -491,6 +491,13 @@ export const confirm = (text, events) => new ConfirmBox(text, events);
 export const toast = (text, timeout) => new ToastBox(text, timeout);
 export const pop = (option, events) => new PopBox(option, events);
 export const current = () => currentBox;
+export const root = () => {
+  let box = currentBox, lastBox;
+  do {
+    lastBox = box;
+  } while (box = box.prev())
+  return lastBox;
+};
 export const config = option => {
   if (option && typeof option === 'object') Object.assign(message.option, option);
   return Object.assign({}, message.option);
@@ -502,5 +509,6 @@ export default {
   config,
   pop,
   toast,
-  current
+  current,
+  root
 }
