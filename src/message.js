@@ -372,7 +372,7 @@ class Box {
         while (box) {
           box.node.style.zIndex = zIndex++;
           box = boxData[box.id].nextBox;
-        };
+        }
 
         //末端到2个box交换z-index和className
         currentBox.node.classList.remove(activeClassName) && message.option.activeClassName && currentBox.node.classList.remove(message.option.activeClassName);
