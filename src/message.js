@@ -45,7 +45,7 @@ mask = {
 }, //蒙层对象
 transformStyle = transform3d ? 'translate3d({$position},0)' : 'translate({$position})',
 transformStr = !hasTransformPrefix ? 'transform' : `${cssPrefix}Transform`,
-destroy = {}
+boxData = {}
 ;
 let currentBox = null, //当前弹窗对象
 counter = 0 //当前弹窗个数计数器
@@ -102,7 +102,7 @@ function dragEvent (box) {
   let enable = false //是否允许移动
   ;
   
-  destroy[box.id].push(() => box = null);
+  boxData[box.id].destroy.push(() => box = null);
   //确定拖动模式
   if (message.option.transform && transform) {
     //transform模式
@@ -298,8 +298,8 @@ function create (self) {
   //保存当前对象
   if (currentBox) {
     try {
-      self.prevBox = currentBox;
-      currentBox.nextBox = self;
+      boxData[self.id].prevBox = currentBox;
+      boxData[currentBox.id].nextBox = self;
       currentBox.node.classList.remove(activeClassName) && message.option.activeClassName && currentBox.node.classList.remove(message.option.activeClassName);
     } catch (e) {
       console.log('create error:', e);
@@ -320,7 +320,7 @@ function create (self) {
       } catch (e) {console.log(`remove box error: ${self.id}`)}
     }, self.option.timeout * 1000);
   }
-  destroy[self.id].push(() => self = null);
+  boxData[self.id].destroy.push(() => self = null);
 }
 
 class Box {
@@ -334,15 +334,20 @@ class Box {
       {},
       defaultOption,
       typeof text === 'string' ? { text } : text);
-    this.events = events;
-    this.nextBox = this.prevBox = this.node = this.movesNode = null;
-    destroy[this.id] = [];
+    this.node = this.movesNode = null;
+    boxData[this.id] = {
+      nextBox: null,
+      prevBox: null,
+      destroy: [],
+      events
+    };
   }
   /*
    * 激活当前弹窗到顶层
    */
   activate () {
     const node = this.node;
+    const data = boxData[this.id];
     //断开当前box对象
     this.option.buttons.length && node.querySelector(`.${className}__foot>button:first-child`).focus();
     node.classList.add(activeClassName) && message.option.activeClassName && node.classList.add(message.option.activeClassName);
@@ -351,19 +356,22 @@ class Box {
       let box,
         zIndex = node.style.zIndex;
       try {
-        if (this.prevBox)
-          this.prevBox.nextBox = this.nextBox;
-        if (this.nextBox) {
-          this.nextBox.prevBox = this.prevBox;
-          box = this.nextBox;
+        if (data.prevBox) {
+          let prev = data.prevBox;
+          boxData[prev.id].nextBox = data.nextBox;
         }
-        currentBox.nextBox = this;
-        this.prevBox = currentBox;
-        this.nextBox = null;
+        if (data.nextBox) {
+          let next = data.nextBox
+          boxData[next.id].prevBox = data.prevBox;
+          box = data.nextBox;
+        }
+        boxData[currentBox.id].nextBox = this;
+        data.prevBox = currentBox;
+        data.nextBox = null;
         //重新排z-index
         while (box) {
           box.node.style.zIndex = zIndex++;
-          box = box.nextBox;
+          box = boxData[box.id].nextBox;
         };
 
         //末端到2个box交换z-index和className
@@ -373,7 +381,7 @@ class Box {
       }
       currentBox = this;
     }
-    this.events && typeof this.events.active === 'function' && this.events.active(this);
+    data.events && typeof data.events.active === 'function' && data.events.active(this);
 
     return this;
   }
@@ -382,27 +390,32 @@ class Box {
    */
   remove (index = -1) {
     //移除node
-    const data = {
-      index,
-      type: this.type
-    }
-    ;
+    const data = boxData[this.id];
     this.node.parentNode.removeChild(this.node);
     this.node = this.movesNode = null;
-    this.resolve(data);
+    this.resolve({
+      index,
+      type: this.type
+    });
     this.promise.catch(() => {});
-    this.events && typeof this.events.close === 'function' && this.events.close(data);
+    data.events && typeof data.events.close === 'function' && data.events.close({
+      index,
+      type: this.type
+    });
     //清理message列表
     if (--counter) {
       //当前活动弹窗（currentBox）
       try {
-        if (this.prevBox)
-          this.prevBox.nextBox = this.nextBox;
-        if (this.nextBox) {
-          this.nextBox.prevBox = this.prevBox;
+        if (data.prevBox) {
+          let prev = data.prevBox;
+          boxData[prev.id].nextBox = data.nextBox;
+        }
+        if (data.nextBox) {
+          let next = data.nextBox;
+          boxData[next.id].prevBox = data.prevBox;
         }
         if (currentBox === this) {
-          currentBox = this.prevBox;
+          currentBox = data.prevBox;
           currentBox.activate();
         }
       } catch (e) {
@@ -413,10 +426,10 @@ class Box {
       //关闭蒙版
       mask.hide();
     }
-
-    this.events = this.prevBox = this.nextBox = null;
-    destroy[this.id].forEach(fn => fn());
-    destroy[this.id] = null;
+    // destroy data
+    data.destroy.forEach(fn => fn());
+    data.destroy = data.events = data.prevBox = data.nextBox = null;
+    boxData[this.id] = null;
   }
   /*
    *  关闭事件
@@ -428,6 +441,12 @@ class Box {
   text (text) {
     this.node.querySelector(`.${className}__body`).innerHTML = text;
     return this;
+  }
+  prev () {
+    return boxData[this.id].prevBox;
+  }
+  next () {
+    return boxData[this.id].nextBox;
   }
 }
 class AlertBox extends Box {
@@ -471,6 +490,7 @@ export const alert = (text, events) => new AlertBox(text, events);
 export const confirm = (text, events) => new ConfirmBox(text, events);
 export const toast = (text, timeout) => new ToastBox(text, timeout);
 export const pop = (option, events) => new PopBox(option, events);
+export const current = () => currentBox;
 export const config = option => {
   if (option && typeof option === 'object') Object.assign(message.option, option);
   return Object.assign({}, message.option);
@@ -481,5 +501,6 @@ export default {
   confirm,
   config,
   pop,
-  toast
+  toast,
+  current
 }
