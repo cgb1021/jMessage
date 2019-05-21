@@ -68,7 +68,7 @@ current()
 root()
 
 /*
- * setting
+ * global option
  * @param object option {
  *  zIndex: 999, // css z-index
     activeClassName: '', // css class name when active
@@ -77,6 +77,21 @@ root()
   }
  */
 config()
+
+/*
+ * instance default option
+ * @param object option {
+      title: '提示', // title
+      text: '', // text(html) content
+      buttons: ['确认'], // buttons
+      className: '', // css class name
+      showMask: true, // is show mask div
+      timeout: 0, // how many second when auto close
+      noClose: false, // don't remove div
+      dragMode: 2 // 0 no drag, 1 the entire div can be drag,2 only head can be drag
+    }
+ */
+setDefault()
 ```
 
 ### Box API

@@ -502,6 +502,10 @@ export const config = option => {
   if (option && typeof option === 'object') Object.assign(message.option, option);
   return Object.assign({}, message.option);
 }
+export const setDefault = option => {
+  if (option && typeof option === 'object') Object.assign(defaultOption, option);
+  return Object.assign({}, defaultOption);
+}
 
 export default {
   alert,
@@ -510,5 +514,6 @@ export default {
   pop,
   toast,
   current,
-  root
+  root,
+  setDefault
 }

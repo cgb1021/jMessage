@@ -1,6 +1,6 @@
 {
   "name": "jmessage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "js message",
   "main": "index.js",
   "style": "style.css",
@@ -8,10 +8,10 @@
     "lib"
   ],
   "scripts": {
-    "clean": "rm -rf lib && mkdir lib",
+    "clean": "rm -rf lib/* dist/*",
     "lib": "babel src --out-dir lib",
     "sass": "sass style/* style.css",
-    "build": "npm run clean && npm run lib && npm run sass",
+    "build": "npm run clean && npm run lib && npm run sass && rollup src/message.js --file dist/jmessage.js --format umd --name \"myBundle\"",
     "test": "test"
   },
   "repository": {
