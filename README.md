@@ -28,19 +28,19 @@ npm install jmessage
  * @param string text
  * @param object events {close, active}
  */
-alert()
+alert(text, events)
 
 /*
  * @param string text
  * @param object events {close, active}
  */
-confirm()
+confirm(text, events)
 
 /*
  * @param string text
  * @param number timeout default value 3
  */
-toast()
+toast(text, timeout)
 
 /*
   * @param string/object text text(html)/option({
@@ -55,7 +55,7 @@ toast()
     })
   * @param object events {close, active}
   */
-pop()
+pop(option, events)
 
 /*
  * return current box
@@ -76,7 +76,7 @@ root()
     transform: true, // use css transform to drag
   }
  */
-config()
+config(option)
 
 /*
  * instance default option
@@ -91,7 +91,7 @@ config()
       dragMode: 2 // 0 no drag, 1 the entire div can be drag,2 only head can be drag
     }
  */
-setDefault()
+setDefault(option)
 ```
 
 ### Box API
@@ -111,12 +111,13 @@ remove()
  * when the box close(close event)
  * @param function cb
  */
-close()
+close(cb)
 
 /*
  * change text content
+ * @param string text
  */
-text()
+text(text)
 
 /*
  * the previous box
