@@ -6,7 +6,7 @@ let transform= false, //transform
 
 if ('addEventListener' in window) {
   //标准浏览器或者ie9以上
-  let style = global.getComputedStyle(documentElement);
+  let style = window.getComputedStyle(documentElement);
   try {
     //css前缀(浏览器前缀)
     prefix = [].slice.call(style).join('').match(/-(webkit|ms|moz|o)-/i)[1];
@@ -25,7 +25,7 @@ if ('addEventListener' in window) {
       str = `-${prefix}-transform`;
       documentElement.style[str] = 'translate3d(0,0,0)';
     }
-    style = global.getComputedStyle(documentElement);
+    style = window.getComputedStyle(documentElement);
     transform3d = /^\w{5}/.test(style[str]); // 不为空，非none
     documentElement.style.transform = documentElement.style[`-${prefix}-transform`] = '';
   }

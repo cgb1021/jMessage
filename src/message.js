@@ -499,12 +499,15 @@ export const root = () => {
   return lastBox;
 };
 export const config = option => {
-  if (option && typeof option === 'object') Object.assign(message.option, option);
-  return Object.assign({}, message.option);
-}
-export const setDefault = option => {
-  if (option && typeof option === 'object') Object.assign(defaultOption, option);
-  return Object.assign({}, defaultOption);
+  if (option && typeof option === 'object') {
+    for (const k in option) {
+      if (typeof defaultOption[k] !== 'undefined') {
+        defaultOption[k] = option[k];
+      } else if (typeof message.option[k] !== 'undefined') {
+        message.option[k] = option[k];
+      }
+    }
+  }
 }
 
 export default {
@@ -514,6 +517,5 @@ export default {
   pop,
   toast,
   current,
-  root,
-  setDefault
+  root
 }
