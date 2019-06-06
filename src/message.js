@@ -53,30 +53,32 @@ counter = 0 //当前弹窗个数计数器
 
 rootNode.id = 'jmessage';
 rootNode.className = 'jmessage';
-document.body.appendChild(rootNode);
-//监测键盘esc
-document.body.addEventListener('keydown', function bodyKeydown(e) {
-  const key = e.which || e.keyCode;
+window.addEventListener('load', () => {
+  document.body.appendChild(rootNode);
+  //监测键盘esc
+  document.body.addEventListener('keydown', function bodyKeydown(e) {
+    const key = e.which || e.keyCode;
 
-  if (/^(?:13|27)$/.test(key) && currentBox && !/toast/i.test(currentBox.type)) {
-    e.stopPropagation();
-    let index = -2;
+    if (/^(?:13|27)$/.test(key) && currentBox && !/toast/i.test(currentBox.type)) {
+      e.stopPropagation();
+      let index = -2;
 
-    if (key === 13) {
-      // enter键
-      let foot = currentBox.node.lastElementChild,
-        btn = foot && foot.classList.contains(`${className}__foot`) ? foot.querySelector('button:focus') : null;
-      for (let i = 0; i < foot.children.length && btn; ++i) {
-        if (btn === foot.children[i]) {
-          index = i + 1;
-          break;
+      if (key === 13) {
+        // enter键
+        let foot = currentBox.node.lastElementChild,
+          btn = foot && foot.classList.contains(`${className}__foot`) ? foot.querySelector('button:focus') : null;
+        for (let i = 0; i < foot.children.length && btn; ++i) {
+          if (btn === foot.children[i]) {
+            index = i + 1;
+            break;
+          }
         }
       }
-    }
 
-    exit(index);
-  }
-});
+      exit(index);
+    }
+  });
+})
 /*
  * 退出
  */

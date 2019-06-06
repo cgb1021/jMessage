@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.myBundle = {}));
+  (global = global || self, factory(global.message = {}));
 }(this, function (exports) { 'use strict';
 
   const documentElement = document.documentElement;
@@ -12,7 +12,7 @@
 
   if ('addEventListener' in window) {
     //标准浏览器或者ie9以上
-    let style = global.getComputedStyle(documentElement);
+    let style = window.getComputedStyle(documentElement);
     try {
       //css前缀(浏览器前缀)
       prefix = [].slice.call(style).join('').match(/-(webkit|ms|moz|o)-/i)[1];
@@ -31,7 +31,7 @@
         str = `-${prefix}-transform`;
         documentElement.style[str] = 'translate3d(0,0,0)';
       }
-      style = global.getComputedStyle(documentElement);
+      style = window.getComputedStyle(documentElement);
       transform3d = /^\w{5}/.test(style[str]); // 不为空，非none
       documentElement.style.transform = documentElement.style[`-${prefix}-transform`] = '';
     }
@@ -95,29 +95,31 @@
 
   rootNode.id = 'jmessage';
   rootNode.className = 'jmessage';
-  document$1.body.appendChild(rootNode);
-  //监测键盘esc
-  document$1.body.addEventListener('keydown', function bodyKeydown(e) {
-    const key = e.which || e.keyCode;
+  window.addEventListener('load', () => {
+    document$1.body.appendChild(rootNode);
+    //监测键盘esc
+    document$1.body.addEventListener('keydown', function bodyKeydown(e) {
+      const key = e.which || e.keyCode;
 
-    if (/^(?:13|27)$/.test(key) && currentBox && !/toast/i.test(currentBox.type)) {
-      e.stopPropagation();
-      let index = -2;
+      if (/^(?:13|27)$/.test(key) && currentBox && !/toast/i.test(currentBox.type)) {
+        e.stopPropagation();
+        let index = -2;
 
-      if (key === 13) {
-        // enter键
-        let foot = currentBox.node.lastElementChild,
-          btn = foot && foot.classList.contains(`${className}__foot`) ? foot.querySelector('button:focus') : null;
-        for (let i = 0; i < foot.children.length && btn; ++i) {
-          if (btn === foot.children[i]) {
-            index = i + 1;
-            break;
+        if (key === 13) {
+          // enter键
+          let foot = currentBox.node.lastElementChild,
+            btn = foot && foot.classList.contains(`${className}__foot`) ? foot.querySelector('button:focus') : null;
+          for (let i = 0; i < foot.children.length && btn; ++i) {
+            if (btn === foot.children[i]) {
+              index = i + 1;
+              break;
+            }
           }
         }
-      }
 
-      exit(index);
-    }
+        exit(index);
+      }
+    });
   });
   /*
    * 退出
@@ -541,12 +543,15 @@
     return lastBox;
   };
   const config = option => {
-    if (option && typeof option === 'object') Object.assign(message.option, option);
-    return Object.assign({}, message.option);
-  };
-  const setDefault = option => {
-    if (option && typeof option === 'object') Object.assign(defaultOption, option);
-    return Object.assign({}, defaultOption);
+    if (option && typeof option === 'object') {
+      for (const k in option) {
+        if (typeof defaultOption[k] !== 'undefined') {
+          defaultOption[k] = option[k];
+        } else if (typeof message.option[k] !== 'undefined') {
+          message.option[k] = option[k];
+        }
+      }
+    }
   };
 
   var message$1 = {
@@ -556,8 +561,7 @@
     pop,
     toast,
     current,
-    root,
-    setDefault
+    root
   };
 
   exports.alert = alert;
@@ -567,7 +571,6 @@
   exports.default = message$1;
   exports.pop = pop;
   exports.root = root;
-  exports.setDefault = setDefault;
   exports.toast = toast;
 
   Object.defineProperty(exports, '__esModule', { value: true });
