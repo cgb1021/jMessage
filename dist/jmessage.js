@@ -45,7 +45,7 @@
     zIndex: 999,
     activeClassName: '',
     maskClassName: '',
-    transform: true, // 是否使用transform属性拖动
+    transform: true // 是否使用transform属性拖动
   }, // 全局自定义配置
   document$1 = window.document,
   rootNode = document$1.createElement('div'),

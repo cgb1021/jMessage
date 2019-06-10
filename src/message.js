@@ -3,7 +3,7 @@ const globalOption = {
   zIndex: 999,
   activeClassName: '',
   maskClassName: '',
-  transform: true, // 是否使用transform属性拖动
+  transform: true // 是否使用transform属性拖动
 }, // 全局自定义配置
 document = window.document,
 rootNode = document.createElement('div'),
