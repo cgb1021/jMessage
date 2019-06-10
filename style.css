@@ -53,26 +53,21 @@
   .jmessage .message-box__body {
     text-align: justify; }
   .jmessage .message-box__foot {
-    text-align: right; }
+    text-align: right;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; }
     .jmessage .message-box__foot > button {
-      border-radius: .2rem;
       margin-left: 1rem;
-      padding: .25rem 1.5rem;
+      padding: .25rem 1rem;
       text-decoration: none;
       outline: none;
       display: inline-block;
       font-weight: 400;
       text-align: center;
-      white-space: nowrap;
-      vertical-align: middle;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
       border: 1px solid transparent;
-      padding: .375rem .75rem;
-      font-size: 1em;
-      line-height: 1.5;
       border-radius: .25rem;
       transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
       cursor: pointer; }
@@ -82,8 +77,8 @@
       .jmessage .message-box__foot > button:focus {
         border-color: #adadad; }
   .jmessage .message-box__close {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 1rem;
+    height: 1rem;
     display: block;
     font-size: 0;
     position: absolute;
@@ -120,7 +115,6 @@
       background-color: #999;
       transform-origin: center; }
 .jmessage .toast-box {
-  padding: .5rem 1rem;
   border-radius: 8px;
   border: none;
   text-align: center;
@@ -128,7 +122,8 @@
   min-width: inherit;
   width: inherit;
   background-color: rgba(0, 0, 0, 0.6);
-  color: white; }
+  color: white;
+  opacity: .8; }
   .jmessage .toast-box .message-box__head,
   .jmessage .toast-box .message-box__foot {
     display: none; }

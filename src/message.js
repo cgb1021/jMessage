@@ -22,21 +22,32 @@ boxOption = {
 }, //弹窗默认配置
 mask = {
   node: null,
-  hide() {
-    this.node && this.node.classList.add('hide');
-  },
-  show() {
+  show () {
     if (!this.node) {
       // 生成mask
       const node = this.node = document.createElement('div');
       node.style.zIndex = globalOption.zIndex;
       rootNode.appendChild(node);
 
-      node.addEventListener('click', function maskClick () {
-        !currentBox.option.noClose && counter <= 1 && exit(-1);
+      node.addEventListener('click', function maskClick() {
+        counter && !currentBox.option.noClose && exit(-1);
       });
     }
     this.node.className = `${maskClassName} ${globalOption.maskClassName}`;
+  },
+  hide () {
+    let count = counter;
+    if (count) {
+      count = 0;
+      let box = currentBox;
+      do {
+        if (!box.option.noClose)
+          count++;
+      } while (box = box.prev())
+    }
+    if (!count) {
+      this.node && this.node.classList.add('hide');
+    }
   }
 }, //蒙层对象
 transformStyle = transform3d ? 'translate3d({$position},0)' : 'translate({$position})',
@@ -55,7 +66,7 @@ window.addEventListener('load', () => {
   document.body.addEventListener('keydown', function bodyKeydown(e) {
     const key = e.which || e.keyCode;
 
-    if (/^(?:13|27)$/.test(key) && currentBox && !/toast/i.test(currentBox.type)) {
+    if (/^(?:13|27)$/.test(key) && counter && !currentBox.option.noClose) {
       e.stopPropagation();
       let index = -2;
 
@@ -92,7 +103,6 @@ window.addEventListener('load', () => {
  */
 function exit(index = -1) {
   counter && currentBox.remove(index);
-  !counter && mask.hide();
 }
 /*
  * 移动处理方法
@@ -433,13 +443,13 @@ class Box {
       }
     } else {
       currentBox = null;
-      //关闭蒙版
-      mask.hide();
     }
     // destroy data
     data.destroy.forEach(fn => fn());
     data.destroy = data.events = data.prevBox = data.nextBox = null;
     boxData[this.id] = null;
+    //关闭蒙版
+    mask.hide();
   }
   /*
    *  关闭事件
@@ -483,7 +493,8 @@ class ToastBox extends Box {
       timeout,
       showMask: false,
       dragMode: 0,
-      buttons: []
+      buttons: [],
+      noClose: true
     });
     this.type = 'toast';
     create(this);
