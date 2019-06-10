@@ -41,22 +41,18 @@
     prefix = 'ms';
   }
 
-  const message = {
-    option: {
-      zIndex: 999,
-      activeClassName: '',
-      maskClassName: '',
-      transform: true, // 是否使用transform属性拖动
-    }, // 全局自定义配置
-    box: null,
-    length: 0
-  }, //消息对象
+  const globalOption = {
+    zIndex: 999,
+    activeClassName: '',
+    maskClassName: '',
+    transform: true, // 是否使用transform属性拖动
+  }, // 全局自定义配置
   document$1 = window.document,
   rootNode = document$1.createElement('div'),
   className = 'message-box', // 弹窗通用classname
   activeClassName = `${className}_active`, // 当前激活弹窗classname
   maskClassName = `${className}__mask`, // 遮罩层classname
-  defaultOption = {
+  boxOption = {
     title: '提示', // 显示标题
     text: '', // 主体内容（文字）
     buttons: ['确认'], // 按钮数组
@@ -75,14 +71,14 @@
       if (!this.node) {
         // 生成mask
         const node = this.node = document$1.createElement('div');
-        node.style.zIndex = message.option.zIndex;
+        node.style.zIndex = globalOption.zIndex;
         rootNode.appendChild(node);
 
         node.addEventListener('click', function maskClick () {
           !currentBox.option.noClose && counter <= 1 && exit(-1);
         });
       }
-      this.node.className = `${maskClassName} ${message.option.maskClassName}`;
+      this.node.className = `${maskClassName} ${globalOption.maskClassName}`;
     }
   }, //蒙层对象
   transformStyle = transform3d ? 'translate3d({$position},0)' : 'translate({$position})',
@@ -120,6 +116,18 @@
         exit(index);
       }
     });
+    if (counter) {
+      // 窗口居中
+      let box = currentBox;
+      do {
+        const css = box.node.style.cssText.toString();
+        if (/translate/i.test(css)) {
+          box.node.style.cssText = css.replace(/\([^,]+,[^,]+/, `(-${Math.floor(box.node.offsetWidth / 2)}px, -${Math.floor(box.node.offsetHeight / 2)}px`);
+        } else {
+          box.node.style.cssText = css.replace(/left\s*:\s*[\w.]+/i, `left:${(document$1.documentElement.clientWidth - box.node.offsetWidth) / 2}px`).replace(/top\s*:\s*[\w.]+/i, `top:${(document$1.documentElement.clientHeight - box.node.offsetHeight) / 2}px`);
+        }
+      } while (box = box.prev())
+    }
   });
   /*
    * 退出
@@ -148,7 +156,7 @@
     
     boxData[box.id].destroy.push(() => box = null);
     //确定拖动模式
-    if (message.option.transform && transform) {
+    if (globalOption.transform && transform) {
       //transform模式
       return function dragEventTransform (e) {
         const type = e.type;
@@ -289,16 +297,16 @@
       length = self.option.buttons.length
     ;
     node.id = `${self.type}_box_${self.id}`;
-    node.className = `${className} ${self.type}-box ${activeClassName} ${message.option.activeClassName} ${self.option.className}`;
+    node.className = `${className} ${self.type}-box ${activeClassName} ${globalOption.activeClassName} ${self.option.className}`;
     node.innerHTML = `<div class="${className}__head">${self.option.title}<span class="${className}__close" title="close/关闭">×</span></div><div class="${className}__body">${self.option.text}</div><div class="${className}__foot"></div></div>`;
     rootNode.appendChild(node);
     //绑定关闭事件
-    let cssText = `position:fixed;z-index:${(typeof message.option.zIndex === 'number' && message.option.zIndex > 0 ? message.option.zIndex : 10000) + counter};`,
+    let cssText = `position:fixed;z-index:${(typeof globalOption.zIndex === 'number' && globalOption.zIndex > 0 ? globalOption.zIndex : 10000) + counter};`,
       eventsName
     ;
 
     //create node
-    if (message.option.transform && transform) {
+    if (globalOption.transform && transform) {
       // cssText += 'left:50%;top:50%;' + (hasTransformPrefix ? `-${cssPrefix}-transform:translate(-${Math.floor(node.offsetWidth / 2)}px,-${Math.floor(node.offsetHeight / 2)}px);` : `transform:translate(-${Math.floor(node.offsetWidth / 2)}px,-${Math.floor(node.offsetHeight / 2)}px);`);
       cssText += `left:50%;top:50%;${hasTransformPrefix ? `-${prefix}-` : ''}transform:${transformStyle}`.replace('{$position}', `-${Math.floor(node.offsetWidth / 2)}px,-${Math.floor(node.offsetHeight / 2)}px`);
     } else {
@@ -344,7 +352,7 @@
       try {
         boxData[self.id].prevBox = currentBox;
         boxData[currentBox.id].nextBox = self;
-        currentBox.node.classList.remove(activeClassName) && message.option.activeClassName && currentBox.node.classList.remove(message.option.activeClassName);
+        currentBox.node.classList.remove(activeClassName) && globalOption.activeClassName && currentBox.node.classList.remove(globalOption.activeClassName);
       } catch (e) {
         console.log('create error:', e);
       }
@@ -376,7 +384,7 @@
       this.id = counter++;
       this.option = Object.assign(
         {},
-        defaultOption,
+        boxOption,
         typeof text === 'string' ? { text } : text);
       this.node = this.movesNode = null;
       boxData[this.id] = {
@@ -394,7 +402,7 @@
       const data = boxData[this.id];
       //断开当前box对象
       this.option.buttons.length && node.querySelector(`.${className}__foot>button:first-child`).focus();
-      node.classList.add(activeClassName) && message.option.activeClassName && node.classList.add(message.option.activeClassName);
+      node.classList.add(activeClassName) && globalOption.activeClassName && node.classList.add(globalOption.activeClassName);
       //把当前box对象添加到链到末端
       if (currentBox !== this) {
         let box,
@@ -419,7 +427,7 @@
           }
 
           //末端到2个box交换z-index和className
-          currentBox.node.classList.remove(activeClassName) && message.option.activeClassName && currentBox.node.classList.remove(message.option.activeClassName);
+          currentBox.node.classList.remove(activeClassName) && globalOption.activeClassName && currentBox.node.classList.remove(globalOption.activeClassName);
         } catch (e) {
           console.log('activate error:', e);
         }
@@ -545,30 +553,31 @@
   const config = option => {
     if (option && typeof option === 'object') {
       for (const k in option) {
-        if (typeof defaultOption[k] !== 'undefined') {
-          defaultOption[k] = option[k];
-        } else if (typeof message.option[k] !== 'undefined') {
-          message.option[k] = option[k];
+        if (typeof boxOption[k] !== 'undefined') {
+          boxOption[k] = option[k];
+        } else if (typeof globalOption[k] !== 'undefined') {
+          globalOption[k] = option[k];
         }
       }
     }
   };
 
-  var message$1 = {
+  var message = {
     alert,
     confirm,
     config,
     pop,
     toast,
     current,
-    root
+    root,
+    length: () => counter
   };
 
   exports.alert = alert;
   exports.config = config;
   exports.confirm = confirm;
   exports.current = current;
-  exports.default = message$1;
+  exports.default = message;
   exports.pop = pop;
   exports.root = root;
   exports.toast = toast;

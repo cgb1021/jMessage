@@ -5,7 +5,8 @@
   "main": "index.js",
   "style": "style.css",
   "files": [
-    "lib"
+    "lib",
+    "style.css"
   ],
   "scripts": {
     "clean": "rm -rf lib/* dist/*",
