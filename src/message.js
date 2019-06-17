@@ -471,17 +471,22 @@ class Box {
 }
 class AlertBox extends Box {
   constructor (text, events) {
-    super({ text }, events);
+    const option = { text };
+    if (boxOption.buttons.length > 1) {
+      option.buttons = [ boxOption.buttons[0] ];
+    }
+    super(option, events);
     this.type = 'alert';
     create(this);
   }
 }
 class ConfirmBox extends Box {
   constructor (text, events) {
-    super({
-      text,
-      buttons: ['确认', '取消']
-    }, events);
+    const option = { text };
+    if (boxOption.buttons.length < 2) {
+      option.buttons = ['确认', '取消'];
+    }
+    super(option, events);
     this.type = 'confirm';
     create(this);
   }
