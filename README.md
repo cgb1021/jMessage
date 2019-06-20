@@ -45,13 +45,13 @@ toast(text, timeout)
 /*
   * @param string/object text text(html)/option({
       title: '提示', // title
-      text: '', // text(html) content
+      text: '', // content(text/html)
       buttons: ['确认'], // buttons
-      className: '', // css class name
-      showMask: true, // is show mask div
-      timeout: 0, // how many second when auto close
-      noClose: false, // don't remove div
-      dragMode: 2 // 0 no drag, 1 the entire div can be drag,2 only head can be drag
+      className: '', // 自定义ClassName(box node class name)
+      showMask: true, // 是否显示遮罩层(show mask node or not)
+      timeout: 0, // 多少秒后自动关闭(how many seconds when the box auto remove)
+      noClose: false, // 当点击遮罩层或者按ESC键时，是否移除box(don't remove box when click mask or press ESC key)
+      dragMode: 2 // 鼠标有效拖动区域(0 no drag, 1 the entire box can be drag,2 only head can be drag)
     })
   * @param object events {close, active}
   */
@@ -71,17 +71,17 @@ root()
  * global option
  * @param object option {
  *  zIndex: 999, // css z-index
-    activeClassName: '', // css class name when active
-    maskClassName: '', // the mask div className
-    transform: true, // use css transform to drag
+    activeClassName: '', // 弹窗激活时的className(the className when the box is active)
+    maskClassName: '', // 遮罩层className(the mask node className)
+    transform: true, // 是否使用css transform拖动(use css transform when the box is draging)
     title: '提示', // title
-    text: '', // text(html) content
+    text: '', // content(text/html)
     buttons: ['确认'], // buttons
-    className: '', // css class name
-    showMask: true, // is show mask div
-    timeout: 0, // how many second when auto close
-    noClose: false, // don't remove div
-    dragMode: 2 // 0 no drag, 1 the entire div can be drag,2 only head can be drag
+    className: '', // 自定义ClassName(box node class name)
+    showMask: true, // 是否显示遮罩层(show mask node or not)
+    timeout: 0, // 多少秒后自动关闭(how many seconds when the box auto remove)
+    noClose: false, // 当点击遮罩层或者按ESC键时，是否移除box(don't remove box when click mask or press ESC key)
+    dragMode: 2 // 鼠标有效拖动区域(0 no drag, 1 the entire box can be drag,2 only head can be drag)
   }
  */
 config(option)
@@ -103,6 +103,8 @@ remove()
 /*
  * when the box close(close event)
  * @param function cb
+ * 
+ * @return object promise
  */
 close(cb)
 
@@ -131,7 +133,7 @@ next()
  */
 message.alert('it is alert1', {
   /*res {
-  *   index: -3 timeout, -2 esc key, -1 click mask, 0 click close button, 1~ click footer buttons
+  *   index: -3 timeout, -2 press esc key, -1 click mask, 0 click close button, 1~ click footer buttons
   * }
   */
   close (res) {
@@ -146,7 +148,7 @@ message.alert('it is alert1', {
 /*
  * use promise when close
  * res {
- *   index: -3 timeout, -2 esc key, -1 click mask, 0 click close button, 1~ click footer buttons
+ *   index: -3 timeout, -2 press esc key, -1 click mask, 0 click close button, 1~ click footer buttons
  * }
  */
 message.alert('it is alert2').close(res => {
