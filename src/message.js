@@ -521,7 +521,7 @@ export const root = () => {
   let box = currentBox, lastBox;
   do {
     lastBox = box;
-  } while (box = box.prev())
+  } while (box && (box = box.prev()))
   return lastBox;
 };
 export const config = option => {

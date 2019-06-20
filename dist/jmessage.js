@@ -563,7 +563,7 @@
     let box = currentBox, lastBox;
     do {
       lastBox = box;
-    } while (box = box.prev())
+    } while (box && (box = box.prev()))
     return lastBox;
   };
   const config = option => {
