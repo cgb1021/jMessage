@@ -89,15 +89,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // 窗口居中
     let box = currentBox;
     do {
-      const css = box.node.style.cssText.toString();
-      if (/translate/i.test(css)) {
-        box.node.style.cssText = css.replace(/\([^,]+,[^,]+/, `(-${Math.floor(box.node.offsetWidth / 2)}px, -${Math.floor(box.node.offsetHeight / 2)}px`);
-      } else {
-        box.node.style.cssText = css.replace(/left\s*:\s*[\w.]+/i, `left:${(document.documentElement.clientWidth - box.node.offsetWidth) / 2}px`).replace(/top\s*:\s*[\w.]+/i, `top:${(document.documentElement.clientHeight - box.node.offsetHeight) / 2}px`);
-      }
+      center(box.node)
     } while (box = box.prev())
   }
 })
+/*
+ * 窗口居中
+ */
+function center (node) {
+  if (!node) return;
+  const css = node.style.cssText.toString();
+  if (/translate/i.test(css)) {
+    node.style.cssText = css.replace(/\([^,]+,[^,]+/, `(-${Math.floor(node.offsetWidth / 2)}px, -${Math.floor(node.offsetHeight / 2)}px`);
+  } else {
+    node.style.cssText = css.replace(/left\s*:\s*[\w.]+/i, `left:${(document.documentElement.clientWidth - node.offsetWidth) / 2}px`).replace(/top\s*:\s*[\w.]+/i, `top:${(document.documentElement.clientHeight - node.offsetHeight) / 2}px`);
+  }
+}
 /*
  * 退出
  */
@@ -450,6 +457,10 @@ class Box {
     boxData[this.id] = null;
     //关闭蒙版
     mask.hide();
+  }
+  center () {
+    center(this.node);
+    return this;
   }
   /*
    *  关闭事件

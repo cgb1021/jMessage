@@ -115,6 +115,11 @@ close(cb)
 text(text)
 
 /*
+ * vertical/horizontal center
+ */
+center()
+
+/*
  * the previous box
  */
 prev()
