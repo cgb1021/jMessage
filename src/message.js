@@ -60,7 +60,7 @@ counter = 0 //当前弹窗个数计数器
 
 rootNode.id = 'jmessage';
 rootNode.className = 'jmessage';
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   document.body.appendChild(rootNode);
   //监测键盘esc
   document.body.addEventListener('keydown', function bodyKeydown(e) {

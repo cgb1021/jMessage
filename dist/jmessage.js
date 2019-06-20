@@ -102,7 +102,7 @@
 
   rootNode.id = 'jmessage';
   rootNode.className = 'jmessage';
-  window.addEventListener('load', () => {
+  document$1.addEventListener('DOMContentLoaded', () => {
     document$1.body.appendChild(rootNode);
     //监测键盘esc
     document$1.body.addEventListener('keydown', function bodyKeydown(e) {
