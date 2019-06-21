@@ -568,7 +568,7 @@
     }, {
       key: 'close',
       value: function close(cb) {
-        return boxData[this.id].promise.then(cb);
+        return typeof cb === 'function' ? boxData[this.id].promise.then(cb.bind(this)) : boxData[this.id].promise;
       }
     }, {
       key: 'text',

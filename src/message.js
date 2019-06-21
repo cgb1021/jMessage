@@ -480,7 +480,7 @@ class Box {
    *  -3 timeout -2 键盘esc -1 点击遮罩层 0 关闭按钮 1~ 底部按钮
    */
   close (cb) {
-    return boxData[this.id].promise.then(cb);
+    return typeof cb === 'function' ? boxData[this.id].promise.then(cb.bind(this)) : boxData[this.id].promise;
   }
   text (text) {
     this.node.querySelector(`.${className}__body`).innerHTML = text;
