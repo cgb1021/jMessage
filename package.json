@@ -1,6 +1,6 @@
 {
   "name": "jmessage",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "js message",
   "main": "index.js",
   "style": "style.css",
@@ -31,7 +31,6 @@
   "homepage": "https://github.com/cgb1021/jMessage#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-stage-2": "^6.24.1",
-    "rollup-plugin-babel": "^3.0.7"
+    "babel-preset-stage-2": "^6.24.1"
   }
 }
