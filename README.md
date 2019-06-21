@@ -55,7 +55,7 @@ toast(text, timeout)
       events: {close(), active()}
     })
   */
-pop(option, events)
+pop(option)
 
 /*
  * return current box
