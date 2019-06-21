@@ -42,7 +42,7 @@ mask = {
       let box = currentBox;
       do {
         if (!box.option.noClose)
-          count++;
+          ++count;
       } while (box = box.prev())
     }
     if (!count) {
@@ -296,7 +296,7 @@ function create (self) {
   if (length) {
     //如果有按钮
     const footNode = node.childNodes[2];
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length; ++i) {
       const button = document.createElement('button');
       button.className = 'btn';
       button.textContent = self.option.buttons[i];
@@ -359,19 +359,19 @@ class Box {
     let events
     if (typeof text === 'object') {
       if (typeof text.events === 'object') {
-        events = text.events;
+        events = {};
+        for (const k in text.events) {
+          if (/^(?:close|active)$/.test(k) && typeof text.events[k] === 'function')
+            events[k] = text.events[k].bind(this)
+        }
         delete text.events;
-        this.option = Object.assign({}, boxOption, text);
       }
+      this.option = Object.assign({}, boxOption, text);
     } else {
       this.option = Object.assign({},
         boxOption,
         { text });
     }
-    this.option = Object.assign(
-      {},
-      boxOption,
-      typeof text === 'string' ? { text } : text);
     this.node = this.movesNode = null;
     boxData[this.id] = {
       nextBox: null,
@@ -419,7 +419,7 @@ class Box {
       }
       currentBox = this;
     }
-    data.events && typeof data.events.active === 'function' && data.events.active(this);
+    data.events && data.events.active(this);
 
     return this;
   }
@@ -436,7 +436,7 @@ class Box {
       type: this.type
     });
     this.promise.catch(() => {});
-    data.events && typeof data.events.close === 'function' && data.events.close({
+    data.events && data.events.close({
       index,
       type: this.type
     });

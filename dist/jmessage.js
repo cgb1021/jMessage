@@ -99,7 +99,7 @@
         count = 0;
         var box = currentBox;
         do {
-          if (!box.option.noClose) count++;
+          if (!box.option.noClose) ++count;
         } while (box = box.prev());
       }
       if (!count) {
@@ -372,7 +372,7 @@
         footNode.appendChild(button);
       };
 
-      for (var i = 0; i < length; i++) {
+      for (var i = 0; i < length; ++i) {
         _loop(i);
       }
       footNode.firstElementChild.focus();
@@ -434,14 +434,16 @@
       var events = void 0;
       if ((typeof text === 'undefined' ? 'undefined' : _typeof(text)) === 'object') {
         if (_typeof(text.events) === 'object') {
-          events = text.events;
+          events = {};
+          for (var k in text.events) {
+            if (/^(?:close|active)$/.test(k) && typeof text.events[k] === 'function') events[k] = text.events[k].bind(this);
+          }
           delete text.events;
-          this.option = Object.assign({}, boxOption, text);
         }
+        this.option = Object.assign({}, boxOption, text);
       } else {
         this.option = Object.assign({}, boxOption, { text: text });
       }
-      this.option = Object.assign({}, boxOption, typeof text === 'string' ? { text: text } : text);
       this.node = this.movesNode = null;
       boxData[this.id] = {
         nextBox: null,
@@ -493,7 +495,7 @@
           }
           currentBox = this;
         }
-        data.events && typeof data.events.active === 'function' && data.events.active(this);
+        data.events && data.events.active(this);
 
         return this;
       }
@@ -515,7 +517,7 @@
           type: this.type
         });
         this.promise.catch(function () {});
-        data.events && typeof data.events.close === 'function' && data.events.close({
+        data.events && data.events.close({
           index: index,
           type: this.type
         });
