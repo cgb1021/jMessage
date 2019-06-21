@@ -509,6 +509,8 @@ class ConfirmBox extends Box {
     const option = { text, events };
     if (boxOption.buttons.length < 2) {
       option.buttons = ['确认', '取消'];
+    } else if (boxOption.buttons.length > 2) {
+      option.buttons = boxOption.buttons.slice(0, 2);
     }
     super(option);
     this.type = 'confirm';
