@@ -51,9 +51,9 @@ toast(text, timeout)
       showMask: true, // 是否显示遮罩层(show mask node or not)
       timeout: 0, // 多少秒后自动关闭(how many seconds when the box auto remove)
       noClose: false, // 当点击遮罩层或者按ESC键时，是否移除box(don't remove box when click mask or press ESC key)
-      dragMode: 2 // 鼠标有效拖动区域(0 no drag, 1 the entire box can be drag,2 only head can be drag)
+      dragMode: 2, // 鼠标有效拖动区域(0 no drag, 1 the entire box can be drag,2 only head can be drag)
+      events: {close(), active()}
     })
-  * @param object events {close, active}
   */
 pop(option, events)
 

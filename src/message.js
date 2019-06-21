@@ -273,7 +273,7 @@ function create (self) {
   ;
   node.id = `${self.type}_box_${self.id}`;
   node.className = `${className} ${self.type}-box ${activeClassName} ${globalOption.activeClassName} ${self.option.className}`;
-  node.innerHTML = `<div class="${className}__head">${self.option.title}<span class="${className}__close" title="close/关闭">×</span></div><div class="${className}__body">${self.option.text}</div><div class="${className}__foot"></div></div>`;
+  node.innerHTML = `<div class="${className}__head">${self.option.title}<span class="${className}__close" title="close/关闭">x</span></div><div class="${className}__body">${self.option.text}</div><div class="${className}__foot"></div></div>`;
   rootNode.appendChild(node);
   //绑定关闭事件
   let cssText = `position:fixed;z-index:${(typeof globalOption.zIndex === 'number' && globalOption.zIndex > 0 ? globalOption.zIndex : 10000) + counter};`,
@@ -353,10 +353,21 @@ function create (self) {
 class Box {
   /*
    * @param string/object text text(html)/option
-   * @param object events {close, active}
    */
-  constructor (text, events) {
+  constructor (text) {
     this.id = ++counter;
+    let events
+    if (typeof text === 'object') {
+      if (typeof text.events === 'object') {
+        events = text.events;
+        delete text.events;
+        this.option = Object.assign({}, boxOption, text);
+      }
+    } else {
+      this.option = Object.assign({},
+        boxOption,
+        { text });
+    }
     this.option = Object.assign(
       {},
       boxOption,
@@ -482,22 +493,22 @@ class Box {
 }
 class AlertBox extends Box {
   constructor (text, events) {
-    const option = { text };
+    const option = { text, events };
     if (boxOption.buttons.length > 1) {
       option.buttons = [ boxOption.buttons[0] ];
     }
-    super(option, events);
+    super(option);
     this.type = 'alert';
     create(this);
   }
 }
 class ConfirmBox extends Box {
   constructor (text, events) {
-    const option = { text };
+    const option = { text, events };
     if (boxOption.buttons.length < 2) {
       option.buttons = ['确认', '取消'];
     }
-    super(option, events);
+    super(option);
     this.type = 'confirm';
     create(this);
   }
@@ -517,8 +528,8 @@ class ToastBox extends Box {
   }
 }
 class PopBox extends Box {
-  constructor (text, events) {
-    super(text, events);
+  constructor (text) {
+    super(text);
     this.type = 'pop';
     create(this);
   }
@@ -526,7 +537,7 @@ class PopBox extends Box {
 export const alert = (text, events) => new AlertBox(text, events);
 export const confirm = (text, events) => new ConfirmBox(text, events);
 export const toast = (text, timeout) => new ToastBox(text, timeout);
-export const pop = (option, events) => new PopBox(option, events);
+export const pop = (option) => new PopBox(option);
 export const current = () => currentBox;
 export const root = () => {
   let box = currentBox, lastBox;
