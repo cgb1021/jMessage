@@ -12,7 +12,7 @@
     "clean": "rm -rf lib/* dist/*",
     "lib": "babel src --out-dir lib",
     "sass": "sass style/* style.css",
-    "build": "npm run clean && npm run lib && npm run sass && rollup src/message.js --file dist/jmessage.js --format umd --name \"message\"",
+    "build": "npm run clean && npm run lib && npm run sass && rollup -c",
     "test": "test"
   },
   "repository": {

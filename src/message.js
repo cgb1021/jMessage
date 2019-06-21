@@ -356,7 +356,7 @@ class Box {
    * @param object events {close, active}
    */
   constructor (text, events) {
-    this.id = counter++;
+    this.id = ++counter;
     this.option = Object.assign(
       {},
       boxOption,
