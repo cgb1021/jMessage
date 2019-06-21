@@ -336,8 +336,8 @@ function create (self) {
   currentBox = self;
   //打开蒙板
   self.option.showMask && mask.show();
-  self.promise = new Promise((resolve) => {
-    self.resolve = resolve;
+  boxData[self.id].promise = new Promise((resolve) => {
+    boxData[self.id].resolve = resolve;
   });
   //message.length = counter;
   if (self.option.timeout) {
@@ -377,7 +377,9 @@ class Box {
       nextBox: null,
       prevBox: null,
       destroy: [],
-      events
+      events,
+      promise: null,
+      resolve: null
     };
   }
   /*
@@ -431,11 +433,11 @@ class Box {
     const data = boxData[this.id];
     this.node.parentNode.removeChild(this.node);
     this.node = this.movesNode = null;
-    this.resolve({
+    data.resolve({
       index,
       type: this.type
     });
-    this.promise.catch(() => {});
+    data.promise.catch(() => {});
     data.events && data.events.close({
       index,
       type: this.type
@@ -464,7 +466,7 @@ class Box {
     }
     // destroy data
     data.destroy.forEach(fn => fn());
-    data.destroy = data.events = data.prevBox = data.nextBox = null;
+    data.destroy = data.events = data.prevBox = data.nextBox = data.promise = data.resolve = null;
     boxData[this.id] = null;
     //关闭蒙版
     mask.hide();
@@ -478,7 +480,7 @@ class Box {
    *  -3 timeout -2 键盘esc -1 点击遮罩层 0 关闭按钮 1~ 底部按钮
    */
   close (cb) {
-    return this.promise.then(cb);
+    return boxData[this.id].promise.then(cb);
   }
   text (text) {
     this.node.querySelector(`.${className}__body`).innerHTML = text;

@@ -405,8 +405,8 @@
     currentBox = self;
     //打开蒙板
     self.option.showMask && mask.show();
-    self.promise = new Promise(function (resolve) {
-      self.resolve = resolve;
+    boxData[self.id].promise = new Promise(function (resolve) {
+      boxData[self.id].resolve = resolve;
     });
     //message.length = counter;
     if (self.option.timeout) {
@@ -449,7 +449,9 @@
         nextBox: null,
         prevBox: null,
         destroy: [],
-        events: events
+        events: events,
+        promise: null,
+        resolve: null
       };
     }
     /*
@@ -512,11 +514,11 @@
         var data = boxData[this.id];
         this.node.parentNode.removeChild(this.node);
         this.node = this.movesNode = null;
-        this.resolve({
+        data.resolve({
           index: index,
           type: this.type
         });
-        this.promise.catch(function () {});
+        data.promise.catch(function () {});
         data.events && data.events.close({
           index: index,
           type: this.type
@@ -547,7 +549,7 @@
         data.destroy.forEach(function (fn) {
           return fn();
         });
-        data.destroy = data.events = data.prevBox = data.nextBox = null;
+        data.destroy = data.events = data.prevBox = data.nextBox = data.promise = data.resolve = null;
         boxData[this.id] = null;
         //关闭蒙版
         mask.hide();
@@ -566,7 +568,7 @@
     }, {
       key: 'close',
       value: function close(cb) {
-        return this.promise.then(cb);
+        return boxData[this.id].promise.then(cb);
       }
     }, {
       key: 'text',
