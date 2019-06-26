@@ -111,8 +111,16 @@ close(cb)
 /*
  * change text content
  * @param string text
+ * @param string el css selector
  */
-text(text)
+text(text, el)
+
+/*
+ * change text content
+ * @param object child HTMLElement
+ * @param string el css selector
+ */
+append(child, el)
 
 /*
  * vertical/horizontal center
