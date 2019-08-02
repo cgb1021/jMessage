@@ -116,6 +116,7 @@
       -moz-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
       transform: translateY(-50%);
+      box-sizing: content-box;
 
       &:hover {
         -webkit-filter: drop-shadow(0 0 .05rem #666);

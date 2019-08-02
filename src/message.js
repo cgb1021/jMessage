@@ -60,7 +60,7 @@ counter = 0 //当前弹窗个数计数器
 
 rootNode.id = 'jmessage';
 rootNode.className = 'jmessage';
-document.addEventListener('DOMContentLoaded', () => {
+function init () {
   document.body.appendChild(rootNode);
   //监测键盘esc
   document.body.addEventListener('keydown', function bodyKeydown(e) {
@@ -92,7 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
       center(box.node)
     } while (box = box.prev())
   }
-})
+}
+if ('readyState' in document && document.readyState !== 'loading') {
+  init();
+} else {
+  document.addEventListener('DOMContentLoaded', init);
+}
+
 /*
  * 窗口居中
  */
@@ -273,7 +279,7 @@ function create (self) {
   ;
   node.id = `${self.type}_box_${self.id}`;
   node.className = `${className} ${self.type}-box ${activeClassName} ${globalOption.activeClassName} ${self.option.className}`;
-  node.innerHTML = `<div class="${className}__head">${self.option.title}<span class="${className}__close" title="close/关闭">x</span></div><div class="${className}__body">${self.option.text || ''}</div><div class="${className}__foot"></div></div>`;
+  node.innerHTML = `<div class="${className}__head"><h6>${self.option.title}</h6><span class="${className}__close" title="close/关闭">x</span></div><div class="${className}__body">${self.option.text || ''}</div><div class="${className}__foot"></div></div>`;
   rootNode.appendChild(node);
   //绑定关闭事件
   let cssText = `position:fixed;z-index:${(typeof globalOption.zIndex === 'number' && globalOption.zIndex > 0 ? globalOption.zIndex : 10000) + counter};`,

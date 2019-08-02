@@ -89,7 +89,8 @@
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
-    transform: translateY(-50%); }
+    transform: translateY(-50%);
+    box-sizing: content-box; }
     .jmessage .message-box__close:hover {
       -webkit-filter: drop-shadow(0 0 0.05rem #666);
       -moz-filter: drop-shadow(0 0 0.05rem #666);
