@@ -538,6 +538,13 @@
       this.node.querySelector(el).appendChild(child);
       return this;
     }
+    remove (el) {
+      if (el) {
+        const node = this.node.querySelector(el);
+        node.parentNode.removeChild(node);
+      }
+      return this;
+    }
     prev () {
       return boxData[this.id].prevBox;
     }
