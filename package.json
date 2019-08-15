@@ -1,6 +1,6 @@
 {
   "name": "jmessage",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "js message",
   "main": "index.js",
   "style": "style.css",

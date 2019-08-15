@@ -128,7 +128,7 @@ append(child, el)
  * @param string el css selector
  */
 
-remove(child, el)
+removeElement(el)
 
 /*
  * vertical/horizontal center

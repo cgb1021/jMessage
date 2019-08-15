@@ -538,7 +538,7 @@
       this.node.querySelector(el).appendChild(child);
       return this;
     }
-    remove (el) {
+    removeElement (el) {
       if (el) {
         const node = this.node.querySelector(el);
         node.parentNode.removeChild(node);
